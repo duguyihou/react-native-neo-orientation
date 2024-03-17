@@ -59,16 +59,14 @@ class NeoOrientation: RCTEventEmitter {
   @objc
   func getOrientation(callback: @escaping RCTResponseSenderBlock) {
     OperationQueue.main.addOperation { [self] in
-      let orientationStr = getOrientationStr(orientation)
-      callback([orientationStr])
+      callback([orientation?.toString])
     }
   }
 
   @objc
   func getDeviceOrientation(callback: @escaping RCTResponseSenderBlock) {
     OperationQueue.main.addOperation { [self] in
-      let deviceOrientationStr = getDeviceOrientationStr(deviceOrientation)
-      callback([deviceOrientationStr])
+      callback([deviceOrientation.toString])
     }
   }
 
@@ -90,22 +88,15 @@ class NeoOrientation: RCTEventEmitter {
   func lockToLandscape() {
     OperationQueue.main.addOperation { [self] in
       isLocking = true
-      let orientationStr = getOrientationStr(orientation)
+      UIDevice.current.setValue(UIInterfaceOrientation.unknown.rawValue,
+                                forKey: "orientation")
 
-      UIDevice.current.setValue(UIInterfaceOrientation.unknown.rawValue, forKey: "orientation")
+      let landscape = orientation == .landscapeRight ? UIInterfaceOrientation.landscapeLeft.rawValue : UIInterfaceOrientation.landscapeRight.rawValue
+      setOrientation(.landscape)
+      UIDevice.current.setValue(landscape, forKey: "orientation")
 
-      if orientationStr == "landscapeRight" {
-
-        setOrientation(.landscape)
-        UIDevice.current.setValue(UIInterfaceOrientation.landscapeLeft.rawValue, forKey: "orientation")
-      } else {
-        setOrientation(.landscape)
-        UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
-      }
-
-      UIDevice.current.setValue(lastDeviceOrientation, forKey: "orientation")
       UIViewController.attemptRotationToDeviceOrientation()
-      sendEvent(withName: Constants.lockDidChange, 
+      sendEvent(withName: Constants.lockDidChange,
                 body: ["orientation": "landscapeLeft"])
       isLocking = false
     }
@@ -134,7 +125,7 @@ class NeoOrientation: RCTEventEmitter {
 
   @objc
   override func constantsToExport() -> [AnyHashable : Any]! {
-    return ["initialOrientation": getOrientationStr(orientation)]
+    return ["initialOrientation": orientation?.toString]
   }
 
   override class func requiresMainQueueSetup() -> Bool {
@@ -149,13 +140,13 @@ extension NeoOrientation {
 
     if orientation != .unknown && orientation != lastOrientation {
       sendEvent(withName: Constants.orientationDidChange,
-                body: ["orientation" : getOrientationStr(orientation)])
+                body: ["orientation" : orientation?.toString])
       lastOrientation = orientation
     }
 
     if !isLocking && deviceOrientation != lastDeviceOrientation {
       sendEvent(withName: Constants.deviceOrientationDidChange,
-                body: ["orientation": getDeviceOrientationStr(deviceOrientation)])
+                body: ["orientation": deviceOrientation.toString])
       lastDeviceOrientation = deviceOrientation
     }
   }
@@ -173,41 +164,8 @@ extension NeoOrientation {
       UIViewController.attemptRotationToDeviceOrientation()
     }
     sendEvent(withName: Constants.lockDidChange,
-              body: ["orientation": getOrientationStr(newOrientation)])
+              body: ["orientation": newOrientation.toString])
     isLocking = false
   }
-
-  private func getOrientationStr(_ orientation: UIInterfaceOrientation?) -> String {
-    switch orientation {
-    case .portrait:
-      return "portrait"
-    case .landscapeLeft:
-      return "landscapeLeft"
-    case .landscapeRight:
-      return "landscapeRight"
-    case .portraitUpsideDown:
-      return "portraitUpsideDown"
-    default:
-      return "unknown"
-    }
-  }
-
-  private func getDeviceOrientationStr(_ orientation: UIDeviceOrientation?) -> String {
-    switch orientation {
-    case .portrait:
-      return "portrait"
-    case .landscapeLeft:
-      return "landscapeLeft"
-    case .landscapeRight:
-      return "landscapeRight"
-    case .portraitUpsideDown:
-      return "portraitUpsideDown"
-    case .faceUp:
-      return "faceUp"
-    case .faceDown:
-      return "faceDown"
-    default:
-      return "unknown"
-    }
-  }
 }
+
