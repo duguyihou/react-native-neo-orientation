@@ -18,4 +18,8 @@ const NeoOrientation = NativeModules.NeoOrientation
       }
     );
 
+export { useOrientation } from './useOrientation';
+export { useDeviceOrientation } from './useDeviceOrientation';
+export { useLock } from './useLock';
+
 export default NeoOrientation as NeoOrientationAPI;

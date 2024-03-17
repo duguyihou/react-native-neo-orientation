@@ -1,5 +1,9 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
-import type { OrientationStatus } from './types';
+import type {
+  DeviceOrientationStatus,
+  LockStatus,
+  OrientationStatus,
+} from './types';
 
 const { NeoOrientation: Native } = NativeModules;
 
@@ -8,11 +12,13 @@ class NeoOrientationManager {
     const eventEmitter = new NativeEventEmitter(Native);
     return eventEmitter.addListener('orientationDidChange', listener);
   }
-  onDeviceOrientationChanged(listener: (status: OrientationStatus) => void) {
+  onDeviceOrientationChanged(
+    listener: (status: DeviceOrientationStatus) => void
+  ) {
     const eventEmitter = new NativeEventEmitter(Native);
     return eventEmitter.addListener('deviceOrientationDidChange', listener);
   }
-  onLockChanged(listener: (status: OrientationStatus) => void) {
+  onLockChanged(listener: (status: LockStatus) => void) {
     const eventEmitter = new NativeEventEmitter(Native);
     return eventEmitter.addListener('lockDidChange', listener);
   }

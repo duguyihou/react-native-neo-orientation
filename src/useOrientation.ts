@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import NeoOrientationManager from './NeoOrientationManager';
 import type { OrientationStatus } from './types';
 
-const orientationManager = new NeoOrientationManager();
+const manager = new NeoOrientationManager();
 
-export const useNeoOrientation = () => {
+export const useOrientation = () => {
   const [orientation, setOrientation] = useState<OrientationStatus>('unknown');
   useEffect(() => {
-    const subscription = orientationManager.onOrientationChanged((o) => {
+    const subscription = manager.onOrientationChanged((o) => {
       console.log(`🐵 ------ o`, o);
       setOrientation(o);
     });

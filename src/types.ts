@@ -13,3 +13,14 @@ export type OrientationStatus =
   | 'landscapeRight'
   | 'portraitUpsideDown'
   | 'unknown';
+
+export type DeviceOrientationStatus =
+  | 'portrait'
+  | 'landscapeLeft'
+  | 'landscapeRight'
+  | 'portraitUpsideDown'
+  | 'faceUp'
+  | 'faceDown'
+  | 'unknown';
+
+export type LockStatus = boolean | null;
