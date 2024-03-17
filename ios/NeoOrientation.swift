@@ -2,9 +2,14 @@ import Foundation
 
 @objc(NeoOrientation)
 class NeoOrientation: RCTEventEmitter {
+  private struct Constants {
+    static var orientationDidChange = "orientationDidChange"
+    static var deviceOrientationDidChange = "deviceOrientationDidChange"
+    static var lockDidChange = "lockDidChange"
+  }
   private var lastOrientation: UIInterfaceOrientation?
   private var lastDeviceOrientation: UIDeviceOrientation?
-  private var isLocking: Bool?
+  private var isLocking = false
   private static var orientationMask: UIInterfaceOrientationMask = .all
 
   private var deviceOrientation: UIDeviceOrientation {
@@ -27,19 +32,22 @@ class NeoOrientation: RCTEventEmitter {
   }
 
   override func supportedEvents() -> [String] {
-    return ["orientationDidChange", "deviceOrientationDidChange", "lockDidChange"]
+    return [
+      Constants.orientationDidChange,
+      Constants.deviceOrientationDidChange,
+      Constants.lockDidChange
+    ]
   }
 
   override init() {
     super.init()
     lastOrientation = orientation
     lastDeviceOrientation = deviceOrientation
-    isLocking = false
     NotificationCenter.default.addObserver(self,
                                            selector: #selector(deviceOrientationDidChange),
                                            name: UIDevice.orientationDidChangeNotification,
                                            object: nil)
-    addListener("orientationDidChange")
+    addListener(Constants.orientationDidChange)
   }
 
   deinit {
@@ -98,29 +106,29 @@ class NeoOrientation: RCTEventEmitter {
 
       UIDevice.current.setValue(deviceOrientation, forKey: "orientation")
       UIViewController.attemptRotationToDeviceOrientation()
-      sendEvent(withName: "lockDidChange", body: ["orientation": "landscapeLeft"])
+      sendEvent(withName: Constants.lockDidChange, body: ["orientation": "landscapeLeft"])
       isLocking = false
     }
   }
 
   @objc
   func lockToLandscapeRight() {
-    OperationQueue.main.addOperation {
-      self.lockToOrientation(.landscapeLeft, withMask: .landscapeLeft)
+    OperationQueue.main.addOperation { [self] in
+      lockToOrientation(.landscapeLeft, withMask: .landscapeLeft)
     }
   }
 
   @objc
   func lockToLandscapeLeft() {
-    OperationQueue.main.addOperation {
-      self.lockToOrientation(.landscapeRight, withMask: .landscapeRight)
+    OperationQueue.main.addOperation { [self] in
+      lockToOrientation(.landscapeRight, withMask: .landscapeRight)
     }
   }
 
   @objc
   func unlockAllOrientations() {
-    OperationQueue.main.addOperation {
-      self.lockToOrientation(.unknown, withMask: .all)
+    OperationQueue.main.addOperation { [self] in
+      lockToOrientation(.unknown, withMask: .all)
     }
   }
 
@@ -142,12 +150,14 @@ extension NeoOrientation {
     guard deviceOrientation != .unknown else { return }
 
     if orientation != .unknown && orientation != lastOrientation {
-      sendEvent(withName: "orientationDidChange", body: ["orientation" : getOrientationStr(orientation)])
+      sendEvent(withName: Constants.orientationDidChange,
+                body: ["orientation" : getOrientationStr(orientation)])
       lastOrientation = orientation
     }
 
-    if !isLocking! && deviceOrientation != lastDeviceOrientation {
-      sendEvent(withName: "deviceOrientationDidChange", body: ["orientation": getDeviceOrientationStr(deviceOrientation)])
+    if !isLocking && deviceOrientation != lastDeviceOrientation {
+      sendEvent(withName: Constants.deviceOrientationDidChange,
+                body: ["orientation": getDeviceOrientationStr(deviceOrientation)])
       lastDeviceOrientation = deviceOrientation
     }
   }
@@ -165,7 +175,8 @@ extension NeoOrientation {
     } else {
       UIViewController.attemptRotationToDeviceOrientation()
     }
-    sendEvent(withName: "lockDidChange", body: ["orientation": getOrientationStr(newOrientation)])
+    sendEvent(withName: Constants.lockDidChange,
+              body: ["orientation": getOrientationStr(newOrientation)])
     isLocking = false
   }
 
