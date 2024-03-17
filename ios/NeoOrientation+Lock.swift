@@ -8,13 +8,6 @@ extension NeoOrientation {
   }
 
   @objc
-  func lockToPortraitUpsideDown() {
-    OperationQueue.main.addOperation { [self] in
-      lockToOrientation(.portraitUpsideDown, withMask: .portraitUpsideDown)
-    }
-  }
-
-  @objc
   func lockToLandscape() {
     withLock {
       OperationQueue.main.addOperation { [self] in

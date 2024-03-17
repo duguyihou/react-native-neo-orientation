@@ -12,9 +12,7 @@ const Home = () => {
   const handleLockToPortrait = () => {
     NeoOrientation.lockToPortrait();
   };
-  const handleLockToPortraitUpsideDown = () => {
-    NeoOrientation.lockToPortraitUpsideDown();
-  };
+
   const handleLockToLandscapeRight = () => {
     NeoOrientation.lockToLandscapeRight();
   };
@@ -29,10 +27,6 @@ const Home = () => {
       <Text style={styles.text}>Home</Text>
       <Button title="Lock to landscape" onPress={handleLockTolandscape} />
       <Button title="Lock to portrait" onPress={handleLockToPortrait} />
-      <Button
-        title="Lock to portrait upside down"
-        onPress={handleLockToPortraitUpsideDown}
-      />
       <Button
         title="Lock to landscape right"
         onPress={handleLockToLandscapeRight}

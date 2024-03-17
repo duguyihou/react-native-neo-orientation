@@ -1,7 +1,6 @@
 export interface NeoOrientationAPI {
   lockToLandscape: () => void;
   lockToPortrait: () => void;
-  lockToPortraitUpsideDown: () => void;
   lockToLandscapeRight: () => void;
   lockToLandscapeLeft: () => void;
   lockToAllOrientationButUpsideDown: () => void;
