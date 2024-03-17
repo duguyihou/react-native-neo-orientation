@@ -66,23 +66,23 @@ class NeoOrientation: RCTEventEmitter {
 
   @objc
   func getDeviceOrientation(callback: @escaping RCTResponseSenderBlock) {
-    OperationQueue.main.addOperation {
-      let deviceOrientationStr = self.getDeviceOrientationStr(self.deviceOrientation)
+    OperationQueue.main.addOperation { [self] in
+      let deviceOrientationStr = getDeviceOrientationStr(deviceOrientation)
       callback([deviceOrientationStr])
     }
   }
 
   @objc
   func lockToPortrait() {
-    OperationQueue.main.addOperation {
-      self.lockToOrientation(.portrait, withMask: .portrait)
+    OperationQueue.main.addOperation { [self] in
+      lockToOrientation(.portrait, withMask: .portrait)
     }
   }
 
   @objc
   func lockToPortraitUpsideDown() {
-    OperationQueue.main.addOperation {
-      self.lockToOrientation(.portraitUpsideDown, withMask: .portraitUpsideDown)
+    OperationQueue.main.addOperation { [self] in
+      lockToOrientation(.portraitUpsideDown, withMask: .portraitUpsideDown)
     }
   }
 
@@ -90,7 +90,6 @@ class NeoOrientation: RCTEventEmitter {
   func lockToLandscape() {
     OperationQueue.main.addOperation { [self] in
       isLocking = true
-      let deviceOrientation = lastDeviceOrientation
       let orientationStr = getOrientationStr(orientation)
 
       UIDevice.current.setValue(UIInterfaceOrientation.unknown.rawValue, forKey: "orientation")
@@ -104,9 +103,10 @@ class NeoOrientation: RCTEventEmitter {
         UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
       }
 
-      UIDevice.current.setValue(deviceOrientation, forKey: "orientation")
+      UIDevice.current.setValue(lastDeviceOrientation, forKey: "orientation")
       UIViewController.attemptRotationToDeviceOrientation()
-      sendEvent(withName: Constants.lockDidChange, body: ["orientation": "landscapeLeft"])
+      sendEvent(withName: Constants.lockDidChange, 
+                body: ["orientation": "landscapeLeft"])
       isLocking = false
     }
   }
@@ -134,9 +134,7 @@ class NeoOrientation: RCTEventEmitter {
 
   @objc
   override func constantsToExport() -> [AnyHashable : Any]! {
-    let orientationStr = getOrientationStr(orientation)
-
-    return ["initialOrientation": orientationStr]
+    return ["initialOrientation": getOrientationStr(orientation)]
   }
 
   override class func requiresMainQueueSetup() -> Bool {
@@ -165,7 +163,6 @@ extension NeoOrientation {
     isLocking = true
     setOrientation(mask)
     let currentDevice = UIDevice.current
-    //    currentDevice.setValue(UIInterfaceOrientation.unknown, forKey: "orientation")
     currentDevice.setValue(newOrientation, forKey: "orientation")
 
     if #available(iOS 16.0, *) {
