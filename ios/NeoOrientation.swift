@@ -22,14 +22,9 @@ class NeoOrientation: RCTEventEmitter {
   
   override init() {
     super.init()
-    if #available(iOS 13.0, *) {
-      lastOrientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
-    } else {
-      lastOrientation = UIApplication.shared.statusBarOrientation
-    }
+    lastOrientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
     lastDeviceOrientation = getDeviceOrientation()
     isLocking = false
-    
     NotificationCenter.default.addObserver(self,
                                            selector: #selector(deviceOrientationDidChange),
                                            name: UIDevice.orientationDidChangeNotification,
@@ -47,11 +42,7 @@ class NeoOrientation: RCTEventEmitter {
   func getOrientation(callback: @escaping RCTResponseSenderBlock) {
     OperationQueue.main.addOperation {
       var orientation: UIInterfaceOrientation?
-      if #available(iOS 13.0, *) {
-        orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
-      } else {
-        orientation = UIApplication.shared.statusBarOrientation
-      }
+      orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
       let orientationStr = self.getOrientationStr(orientation)
       callback([orientationStr])
     }
@@ -85,12 +76,7 @@ class NeoOrientation: RCTEventEmitter {
     OperationQueue.main.addOperation { [self] in
       isLocking = true
       let deviceOrientation = lastDeviceOrientation
-      var orientation: UIInterfaceOrientation?
-      if #available(iOS 13.0, *) {
-        orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
-      } else {
-        orientation = UIApplication.shared.statusBarOrientation
-      }
+      var orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
       let orientationStr = getOrientationStr(orientation)
       
       UIDevice.current.setValue(UIInterfaceOrientation.unknown.rawValue, forKey: "orientation")
@@ -134,12 +120,7 @@ class NeoOrientation: RCTEventEmitter {
   
   @objc
   override func constantsToExport() -> [AnyHashable : Any]! {
-    var orientation: UIInterfaceOrientation?
-    if #available(iOS 13.0, *) {
-      orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
-    } else {
-      orientation = UIApplication.shared.statusBarOrientation
-    }
+    let orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
     let orientationStr = getOrientationStr(orientation)
     
     return ["initialOrientation": orientationStr]
@@ -157,14 +138,8 @@ extension NeoOrientation {
   
   @objc
   private func deviceOrientationDidChange() {
-    var orientation: UIInterfaceOrientation?
-    if #available(iOS 13.0, *) {
-      let windowScene = UIApplication.shared.windows.first?.windowScene
-      
-      orientation = windowScene?.interfaceOrientation
-    } else {
-      orientation = UIApplication.shared.statusBarOrientation
-    }
+    let windowScene = UIApplication.shared.windows.first?.windowScene
+    let orientation = windowScene?.interfaceOrientation
     let deviceOrientation = getDeviceOrientation()
     guard deviceOrientation != .unknown else { return }
     
