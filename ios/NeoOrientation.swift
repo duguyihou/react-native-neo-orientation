@@ -11,7 +11,7 @@ class NeoOrientation: RCTEventEmitter {
     return UIDevice.current.orientation
   }
 
-  private var interfaceOrientation: UIInterfaceOrientation? {
+  private var orientation: UIInterfaceOrientation? {
     let windowScene = UIApplication.shared.windows.first?.windowScene
     let orientation = windowScene?.interfaceOrientation
     return orientation
@@ -32,7 +32,7 @@ class NeoOrientation: RCTEventEmitter {
 
   override init() {
     super.init()
-    lastOrientation = interfaceOrientation
+    lastOrientation = orientation
     lastDeviceOrientation = deviceOrientation
     isLocking = false
     NotificationCenter.default.addObserver(self,
@@ -50,8 +50,8 @@ class NeoOrientation: RCTEventEmitter {
 
   @objc
   func getOrientation(callback: @escaping RCTResponseSenderBlock) {
-    OperationQueue.main.addOperation {
-      let orientationStr = self.getOrientationStr(self.interfaceOrientation)
+    OperationQueue.main.addOperation { [self] in
+      let orientationStr = getOrientationStr(orientation)
       callback([orientationStr])
     }
   }
@@ -83,7 +83,7 @@ class NeoOrientation: RCTEventEmitter {
     OperationQueue.main.addOperation { [self] in
       isLocking = true
       let deviceOrientation = lastDeviceOrientation
-      let orientationStr = getOrientationStr(interfaceOrientation)
+      let orientationStr = getOrientationStr(orientation)
 
       UIDevice.current.setValue(UIInterfaceOrientation.unknown.rawValue, forKey: "orientation")
 
@@ -126,7 +126,7 @@ class NeoOrientation: RCTEventEmitter {
 
   @objc
   override func constantsToExport() -> [AnyHashable : Any]! {
-    let orientationStr = getOrientationStr(self.interfaceOrientation)
+    let orientationStr = getOrientationStr(orientation)
 
     return ["initialOrientation": orientationStr]
   }
@@ -141,9 +141,9 @@ extension NeoOrientation {
   private func deviceOrientationDidChange() {
     guard deviceOrientation != .unknown else { return }
 
-    if interfaceOrientation != .unknown && interfaceOrientation != lastOrientation {
-      sendEvent(withName: "orientationDidChange", body: ["orientation" : getOrientationStr(interfaceOrientation)])
-      lastOrientation = interfaceOrientation
+    if orientation != .unknown && orientation != lastOrientation {
+      sendEvent(withName: "orientationDidChange", body: ["orientation" : getOrientationStr(orientation)])
+      lastOrientation = orientation
     }
 
     if !isLocking! && deviceOrientation != lastDeviceOrientation {
