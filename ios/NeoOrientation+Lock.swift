@@ -47,7 +47,8 @@ extension NeoOrientation {
     }
   }
 
-  private func lockToOrientation(_ newOrientation: UIInterfaceOrientation, withMask mask: UIInterfaceOrientationMask) {
+  private func lockToOrientation(_ newOrientation: UIInterfaceOrientation, 
+                                 withMask mask: UIInterfaceOrientationMask) {
     withLock {
       setOrientationMask(mask)
       let currentDevice = UIDevice.current
@@ -56,7 +57,8 @@ extension NeoOrientation {
       if #available(iOS 16.0, *) {
         let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
         windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: mask))
-        windowScene.keyWindow?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+        let rootController = windowScene.keyWindow?.rootViewController
+        rootController?.setNeedsUpdateOfSupportedInterfaceOrientations()
       } else {
         UIViewController.attemptRotationToDeviceOrientation()
       }
