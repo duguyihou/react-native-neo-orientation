@@ -1,8 +1,10 @@
 import { Button, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import NeoOrientation from 'react-native-neo-orientation';
+import { useNeoOrientation } from '../../src/useNeoOrientation';
 
 const Home = () => {
+  useNeoOrientation();
   const handleLockTolandscape = () => {
     NeoOrientation.lockToLandscape();
   };

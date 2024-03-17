@@ -1,4 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
+import type { NeoOrientationAPI } from './types';
 
 const LINKING_ERROR =
   `The package 'react-native-neo-orientation' doesn't seem to be linked. Make sure: \n\n` +
@@ -17,14 +18,4 @@ const NeoOrientation = NativeModules.NeoOrientation
       }
     );
 
-interface NeoOrientationInterface {
-  lockToLandscape: () => void;
-  lockToPortrait: () => void;
-  lockToPortraitUpsideDown: () => void;
-  lockToLandscapeRight: () => void;
-  lockToLandscapeLeft: () => void;
-  lockToAllOrientationButUpsideDown: () => void;
-  unlockAllOrientations: () => void;
-}
-
-export default NeoOrientation as NeoOrientationInterface;
+export default NeoOrientation as NeoOrientationAPI;

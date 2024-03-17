@@ -3,6 +3,5 @@
 #import <React/RCTEventEmitter.h>
 
 @interface NeoOrientation : RCTEventEmitter <RCTBridgeModule>
-+ (void)setOrientation: (UIInterfaceOrientationMask)orientation;
-+ (UIInterfaceOrientationMask)getOrientation;
++ (UIInterfaceOrientationMask)getOrientationMask;
 @end

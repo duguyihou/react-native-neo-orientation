@@ -25,6 +25,6 @@
 }
 
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-  return [NeoOrientation getOrientation];
+  return [NeoOrientation getOrientationMask];
 }
 @end
