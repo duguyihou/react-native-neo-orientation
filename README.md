@@ -36,12 +36,63 @@ Add the following to your project's AppDelegate.mm:
 
 @end
 ```
+
+### Android
+
+Implement onConfigurationChanged method (in MainActivity.kt)
+
+```kotlin
+
+import android.content.Intent
+import android.content.res.Configuration
+
+// ...
+
+
+class MainActivity : ReactActivity() {
+//...
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val intent = Intent("onConfigurationChanged")
+        intent.putExtra("newConfig", newConfig)
+        this.sendBroadcast(intent)
+    }
+}
+```
+
+Add following to MainApplication.kt
+
+```kotlin
+
+import com.neoorientation.NeoOrientationActivityLifecycle
+import com.neoorientation.NeoOrientationPackage
+//...
+
+class MainApplication : Application(), ReactApplication {
+
+  override val reactNativeHost: ReactNativeHost =
+      object : DefaultReactNativeHost(this) {
+        override fun getPackages(): List<ReactPackage> =
+            PackageList(this).packages.apply {
+              // Packages that cannot be autolinked yet can be added manually here, for example:
+              // add(MyReactNativePackage())
+              add(NeoOrientationPackage())
+            }
+		//...
+      }
+
+  override fun onCreate() {
+    //...
+    registerActivityLifecycleCallbacks(NeoOrientationActivityLifecycle.instance)
+  }
+}
+```
 ## Usage
 
 ```typescript
 import { Button, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import NeoOrientation from 'react-native-neo-orientation';
+import NeoOrientation, { useDeviceOrientationChange, useOrientationChange } from 'react-native-neo-orientation';
 
 const Home = () => {
   const handleLockTolandscape = () => {
@@ -63,6 +114,15 @@ const Home = () => {
   const handleUnlockAllOrientations = () => {
     NeoOrientation.unlockAllOrientations();
   };
+    
+  useDeviceOrientationChange((o) => {
+    // Handle device orientation change
+  });
+    
+  useOrientationChange((o) => {
+    // Handle orientation change
+  });
+    
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Home</Text>
@@ -105,6 +165,16 @@ const styles = StyleSheet.create({
 });
 ```
 
+## Events
+
+  - `addOrientationListener(function(orientation))`
+  - `removeOrientationListener(function(orientation))`
+  - `addDeviceOrientationListener(function(deviceOrientation))`
+  - `removeDeviceOrientationListener(function(deviceOrientation))`
+  - `addLockListener(function(orientation))`
+  - `removeLockListener(function(orientation))`
+  - `removeAllListeners()`
+
 ## Functions
 
   - `lockToLandscape`
@@ -114,6 +184,9 @@ const styles = StyleSheet.create({
   - `lockToLandscapeLeft`
   - `lockToAllOrientationButUpsideDown`
   - `unlockAllOrientations`
+  - `getOrientation`
+  - `getDeviceOrientation`
+  - `isLocked`
 
 ## Contributing
 
