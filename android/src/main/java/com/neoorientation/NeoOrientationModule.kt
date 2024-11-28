@@ -1,12 +1,12 @@
 package com.neoorientation
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.hardware.SensorManager
-import android.os.Build
 import android.provider.Settings
 import android.view.OrientationEventListener
 import android.view.Surface
@@ -20,9 +20,8 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.common.ReactConstants
 import com.facebook.react.modules.core.DeviceEventManagerModule
 
-class NeoOrientationModule(reactContext: ReactApplicationContext) :
+class NeoOrientationModule(private val reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext), NeoOrientationListeners {
-    private val reactContext: ReactApplicationContext
     private val mReceiver: BroadcastReceiver
     private val mOrientationListener: OrientationEventListener
     private var isLocking = false
@@ -31,7 +30,6 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
     private var lastDeviceOrientation = ""
 
     init {
-        this.reactContext = reactContext
         mOrientationListener =
             object : OrientationEventListener(reactContext, SensorManager.SENSOR_DELAY_UI) {
                 override fun onOrientationChanged(p0: Int) {
@@ -54,8 +52,7 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
                         if (reactContext.hasActiveReactInstance()) {
                             reactContext.getJSModule(
                                 DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-                            )
-                                .emit("deviceOrientationDidChange", params)
+                            ).emit("deviceOrientationDidChange", params)
                         }
                     }
                     val orientation: String = currentOrientation
@@ -64,14 +61,11 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
                         val params = Arguments.createMap()
                         params.putString("orientation", orientation)
                         if (reactContext.hasActiveReactInstance()) {
-                            reactContext
-                                .getJSModule(
-                                    DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-                                )
-                                .emit("orientationDidChange", params)
+                            reactContext.getJSModule(
+                                DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+                            ).emit("orientationDidChange", params)
                         }
                     }
-                    return
                 }
             }
         if (mOrientationListener.canDetectOrientation()) {
@@ -86,11 +80,9 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
                 val params = Arguments.createMap()
                 params.putString("orientation", orientation)
                 if (reactContext.hasActiveReactInstance()) {
-                    reactContext
-                        .getJSModule(
-                            DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-                        )
-                        .emit("orientationDidChange", params)
+                    reactContext.getJSModule(
+                        DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+                    ).emit("orientationDidChange", params)
                 }
             }
         }
@@ -99,15 +91,14 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
 
     private val currentOrientation: String
         get() {
-            val display =
-                (reactApplicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-            when (display.rotation) {
-                Surface.ROTATION_0 -> return "portrait"
-                Surface.ROTATION_90 -> return "landscapeLeft"
-                Surface.ROTATION_180 -> return "portraitUpsideDown"
-                Surface.ROTATION_270 -> return "landscapeRight"
+            val display = (reactApplicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+            return when (display.rotation) {
+                Surface.ROTATION_0 -> "portrait"
+                Surface.ROTATION_90 -> "landscapeLeft"
+                Surface.ROTATION_180 -> "portraitUpsideDown"
+                Surface.ROTATION_270 -> "landscapeRight"
+                else -> "unknown"
             }
-            return "unknown"
         }
 
     override fun getName(): String {
@@ -141,8 +132,7 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
         val lockParams = Arguments.createMap()
         lockParams.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("lockDidChange", lockParams)
         }
     }
@@ -157,16 +147,14 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
         val params = Arguments.createMap()
         params.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("orientationDidChange", params)
         }
 
         val lockParams = Arguments.createMap()
         lockParams.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("lockDidChange", lockParams)
         }
     }
@@ -182,8 +170,7 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
         val params = Arguments.createMap()
         params.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("orientationDidChange", params)
         }
 
@@ -191,8 +178,7 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
         val lockParams = Arguments.createMap()
         lockParams.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("lockDidChange", lockParams)
         }
     }
@@ -208,16 +194,14 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
         val params = Arguments.createMap()
         params.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("orientationDidChange", params)
         }
 
         val lockParams = Arguments.createMap()
         lockParams.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("lockDidChange", lockParams)
         }
     }
@@ -232,16 +216,14 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
         val params = Arguments.createMap()
         params.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("orientationDidChange", params)
         }
 
         val lockParams = Arguments.createMap()
         lockParams.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("lockDidChange", lockParams)
         }
     }
@@ -256,16 +238,14 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
         val params = Arguments.createMap()
         params.putString("orientation", lastOrientation)
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("orientationDidChange", params)
         }
 
         val lockParams = Arguments.createMap()
         lockParams.putString("orientation", "unknown")
         if (reactContext.hasActiveReactInstance()) {
-            reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("lockDidChange", lockParams)
         }
     }
@@ -289,7 +269,11 @@ class NeoOrientationModule(reactContext: ReactApplicationContext) :
 
     override fun start() {
         mOrientationListener.enable()
-        reactContext.registerReceiver(mReceiver, IntentFilter("onConfigurationChanged"))
+        val intentFilter = IntentFilter("onConfigurationChanged").apply {
+//            addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY)
+        }
+
+        reactContext.registerReceiver(mReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED)
         isConfigurationChangeReceiverRegistered = true
     }
 
