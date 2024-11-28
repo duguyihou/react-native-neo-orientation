@@ -1,5 +1,5 @@
-import { useRef, useEffect, MutableRefObject } from 'react';
-import Orientation, { OrientationCallback } from '../orientation';
+import { useRef, useEffect, type MutableRefObject } from 'react';
+import Orientation, { type OrientationCallback } from '../orientation';
 
 export const useLockListener = (callback: OrientationCallback): void => {
   const savedCallback: MutableRefObject<OrientationCallback | undefined> =
